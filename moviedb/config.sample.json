@@ -1,0 +1,7 @@
+{
+  "APP_BASE_URL": "http://127.0.0.1:5000",
+  "APP_HOST": "0.0.0.0",
+  "APP_PORT": 5000,
+  "APP_NAME": "MyMovieDB",
+  "TIMEZONE": "America/Sao_Paulo"
+}
