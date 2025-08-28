@@ -10,11 +10,12 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
         {% block styles %}
         {% endblock %}
+        <title>
+        {{ app_config["APP_NAME"] }}
         {% if title %}
-            <title>{{ title }}</title>
-        {% else %}
-            <title>{{ app_config["APP_NAME"] }}</title>
+            - {{ title }}
         {% endif %}
+        </title>
     {% endblock %}
 </head>
 <body id="page-top" class="d-flex flex-column min-vh-100 mx-2 mt-3">

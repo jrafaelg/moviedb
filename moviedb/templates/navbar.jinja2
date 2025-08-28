@@ -4,7 +4,7 @@
     <nav class="navbar navbar-expand-sm bg-primary-subtle rounded-4 shadow-sm mb-3 px-3 py-2 sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand ps-3"
-               href="{{ url_for('root.index') }}">{{ render_icon('film', size=60) }}&nbsp;&nbsp;MyMovieDB</a>
+               href="{{ url_for('root.index') }}">{{ render_icon('film', size=60) }}&nbsp;&nbsp;{{ app_config["APP_NAME"] }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
