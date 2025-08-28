@@ -12,8 +12,8 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
 
     # instanciando o flask
     app = Flask(__name__,
-                static_folder='../static',
-                template_folder="../templates",
+                static_folder='static',
+                template_folder="templates",
                 instance_relative_config=True
                 )
 
@@ -22,6 +22,8 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     except OSError:
         pass
 
+
+    # chamando o log
     app_logging.configure_logging(logging.DEBUG)
 
     app.logger.debug("configurando a aplicação a partir do arquivo '%s'" % config_filename)
@@ -44,5 +46,7 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     @app.context_processor
     def inject_globals():
         return dict(app_config=app.config)
+
+    app.logger.info("aplicação criada")
 
     return app
