@@ -37,7 +37,7 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     bootstrap.init_app(app)
 
     app.logger.debug("registrando blueprints")
-    from blueprints.root import bp as root_bp
+    from moviedb.blueprints.root import bp as root_bp
     app.register_blueprint(root_bp)
 
     app.logger.debug("definindo processadores de contexto")
