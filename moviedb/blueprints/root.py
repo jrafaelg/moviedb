@@ -5,6 +5,7 @@ bp = Blueprint('root',
                url_prefix='/')
 
 @bp.route('/')
+@bp.route('/index')
 def index():
     return render_template("root/index.jinja2",
                            title="página principal")
