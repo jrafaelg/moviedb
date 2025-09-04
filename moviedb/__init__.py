@@ -5,7 +5,7 @@ import os
 from flask import Flask
 
 from moviedb.infra import app_logging
-from moviedb.infra.modulos import bootstrap, db, migrate
+from moviedb.infra.modulos import bootstrap, db, migrate, login_manager
 
 
 def create_app(config_filename: str = "config.dev.json") -> Flask:
@@ -40,11 +40,14 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     db.init_app(app)
     migrate.init_app(app, db, compare_type=True)
     import moviedb.models
+    # login_manager.init_app(app)
 
 
     app.logger.debug("registrando blueprints")
     from moviedb.blueprints.root import bp as root_bp
     app.register_blueprint(root_bp)
+    from moviedb.blueprints.auth import bp as auth_bp
+    app.register_blueprint(auth_bp)
 
     app.logger.debug("definindo processadores de contexto")
     @app.context_processor
