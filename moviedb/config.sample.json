@@ -4,5 +4,6 @@
   "APP_PORT": 5000,
   "APP_NAME": "MyMovieDB",
   "TIMEZONE": "America/Sao_Paulo",
-  "BOOTSTRAP_BOOTSWATCH_THEME": "Materia"
+  "BOOTSTRAP_BOOTSWATCH_THEME": "Materia",
+  "SQLALCHEMY_DATABASE_URI": "sqlite:///mymovie.db"
 }

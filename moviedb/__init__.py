@@ -5,7 +5,7 @@ import os
 from flask import Flask
 
 from moviedb.infra import app_logging
-from moviedb.infra.modulos import bootstrap
+from moviedb.infra.modulos import bootstrap, db, migrate
 
 
 def create_app(config_filename: str = "config.dev.json") -> Flask:
@@ -37,6 +37,10 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
 
     app.logger.debug("registrando módulos")
     bootstrap.init_app(app)
+    db.init_app(app)
+    migrate.init_app(app, db, compare_type=True)
+    import moviedb.models
+
 
     app.logger.debug("registrando blueprints")
     from moviedb.blueprints.root import bp as root_bp
