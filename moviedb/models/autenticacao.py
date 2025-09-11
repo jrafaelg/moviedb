@@ -1,7 +1,7 @@
 import uuid
 
 from flask_login import UserMixin
-from sqlalchemy import Column, Uuid, String, Boolean
+from sqlalchemy import Column, Uuid, String, Boolean, select
 from werkzeug.security import generate_password_hash
 
 from moviedb.models.mixins import BasicRepositoryMixin
@@ -41,3 +41,7 @@ class User(db.Model, BasicRepositoryMixin, UserMixin):
 
     def get_id(self):
         return f"{str(self.id)}|{self.password[-15:]}"
+
+    @classmethod
+    def get_by_email(cls, email):
+        return db.session.execute(select(cls).where(cls.email_normalizado == normalizar_email(email))).scalar_one_or_none()
