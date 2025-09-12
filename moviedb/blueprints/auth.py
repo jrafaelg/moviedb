@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, request, url_for, render_template
-from flask_login import current_user
+from flask_login import current_user, login_required, login_user, logout_user
 
-from forms.auth import RegistrationForm
+from moviedb.forms.auth import RegistrationForm, LoginForm
 from moviedb import db
 from moviedb.models.autenticacao import User
 
@@ -11,9 +11,9 @@ bp = Blueprint(name='auth',
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    # if current_user.is_authenticated:
-    #     flash("acesso não autorizado para usuários logados", category="warning")
-    #     return redirect(request.referrer if request.referrer else url_for("index"))
+    if current_user.is_authenticated:
+        flash("acesso não autorizado para usuários logados", category="warning")
+        return redirect(request.referrer if request.referrer else url_for("index"))
 
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -33,3 +33,45 @@ def register():
                            title="cadastrar novo usuario",
                            form=form)
 
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+
+    if current_user.is_authenticated:
+        flash("Você já está logado", category="info")
+        return redirect(url_for('root.index'))
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        usuario = User.get_by_email(form.email.data)
+        if usuario is None or not usuario.check_password(form.password.data):
+            flash("Usuário ou senha invalidos!", category="warning")
+            return redirect(url_for('auth.login'))
+        if not usuario.is_active():
+            flash("Usuário impedido de usar o sistema!", category="danger")
+            return redirect(url_for('auth.login'))
+
+        login_user(usuario, remember=form.remember_me.data)
+        flash("Usuário logado!", category="success")
+        return redirect(url_for('root.index'))
+
+    return render_template("auth/login.jinja2",
+                           title="Logar",
+                           form=form)
+
+@bp.route('/logout')
+@login_required
+def logout():
+    """
+    Realiza o logout do usuário autenticado.
+
+    - Encerra a sessão do usuário.
+    - Exibe uma mensagem de sucesso.
+    - Redireciona para a página inicial.
+
+    Returns:
+        Response: Redireciona para a página inicial após logout.
+    """
+    logout_user()
+    flash("Logout efetuado com sucesso!", category='success')
+    return redirect(url_for('root.index'))

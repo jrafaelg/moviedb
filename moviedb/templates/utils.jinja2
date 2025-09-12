@@ -1,4 +1,4 @@
-{% macro render_messages() %}
+{% macro render_messages1() %}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul class="flashes">
@@ -6,6 +6,19 @@
                     <li class="{{ category }}">{{ message }}</li>
                 {% endfor %}
             </ul>
+        {% endif %}
+    {% endwith %}
+{% endmacro %}
+
+{% macro render_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  <strong>MovieDB!</strong> {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
         {% endif %}
     {% endwith %}
 {% endmacro %}

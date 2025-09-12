@@ -7,6 +7,7 @@ from moviedb import db
 
 
 class BasicRepositoryMixin:
+
     @classmethod
     def is_empty(cls) -> bool:
         return not db.session.execute(sa.select(cls).limit(1)).scalar_one_or_none()
@@ -18,7 +19,7 @@ class BasicRepositoryMixin:
         except ValueError:
             obj_id = cls_id
 
-        return db.session.get(cls_id, obj_id)
+        return db.session.get(cls, obj_id)
 
 
 

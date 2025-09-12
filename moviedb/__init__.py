@@ -2,6 +2,7 @@ import json
 import logging
 import os
 
+
 from flask import Flask
 
 from moviedb.infra import app_logging
@@ -40,7 +41,11 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     db.init_app(app)
     migrate.init_app(app, db, compare_type=True)
     import moviedb.models
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = "Para acessar este recurso, você precisa estar logado!"
+    login_manager.login_message_category = 'info'
+
 
 
     app.logger.debug("registrando blueprints")
@@ -53,6 +58,20 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     @app.context_processor
     def inject_globals():
         return dict(app_config=app.config)
+
+    app.logger.debug("definindo o callback de login")
+    @login_manager.user_loader
+    def user_load(user_id):
+        from moviedb.models.autenticacao import User
+        import uuid
+
+        id_usuario, final_da_senha = user_id.split('|', 1)
+        try:
+            auth_id = uuid.UUID(id_usuario)
+        except ValueError:
+            return None
+        usuario = User.get_by_id(auth_id)
+        return usuario if usuario and usuario.password.endswith(final_da_senha) else None
 
     app.logger.info("aplicação criada")
 
