@@ -1,5 +1,6 @@
 import uuid
 
+from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Column, Uuid, String, Boolean, select, func, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -49,3 +50,22 @@ class User(db.Model, BasicRepositoryMixin, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def send_email(self,
+                   subject: str,
+                   body: str,) -> bool:
+        """
+        Envia um e-mail para o usuário utilizando o serviço Postmark.
+
+        Args:
+            subject (str): Assunto do e-mail.
+            body (str): Corpo do e-mail em texto simples.
+
+        Returns:
+            True se conseguir enviar o e-mail, False caso contrário.
+        """
+        from postmarker.core import PostmarkClient
+        postmark = PostmarkClient(server_token=current_app.config["SEVER_TOKEN"])
+        conteudo = postmark.emails.Email(
+            From=
+        )
