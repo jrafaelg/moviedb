@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 
 
 from flask import Flask
@@ -23,7 +24,6 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
     except OSError:
         pass
 
-
     # chamando o log
     app_logging.configure_logging(logging.DEBUG)
 
@@ -36,16 +36,37 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
         app.logger.error("Config file not found")
         exit(1)
 
+    if "SQLALCHEMY_DATABASE_URI" not in app.config:
+        app.logger.fatal("No database URI")
+        sys.exit(1)
+
+    if "APP_HOST" not in app.config:
+        app.logger.warning("No host defined")
+        app.config["APP_HOST"] = "0.0.0.0"
+
+    if "APP_PORT" not in app.config:
+        app.logger.warning("No port defined")
+        app.config["APP_PORT"] = 5000
+
+    if "SECRET_KEY" not in app.config or app.config.get("SECRET_KEY") is None:
+        app.logger.warning("No secret key defined")
+        app.config["SECRET_KEY"] = os.urandom(32).hex()
+        app.logger.warning("Secret key generated: '%s'" % app.config["SECRET_KEY"])
+        app.logger.warning("Para não invalidar os logins persistentes e os JWT "
+                           "gerados efetuados nesta instância da aplicação, "
+                           "adicione a chave acima ao arquivo de configuração")
+
+
     app.logger.debug("registrando módulos")
     bootstrap.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db, compare_type=True)
-    import moviedb.models
     login_manager.init_app(app)
+
+    app.logger.debug("definindo as mensagens padrão")
     login_manager.login_view = 'auth.login'
     login_manager.login_message = "Para acessar este recurso, você precisa estar logado!"
     login_manager.login_message_category = 'info'
-
 
 
     app.logger.debug("registrando blueprints")
@@ -60,6 +81,8 @@ def create_app(config_filename: str = "config.dev.json") -> Flask:
         return dict(app_config=app.config)
 
     app.logger.debug("definindo o callback de login")
+
+    # https://flask-login.readthedocs.io/en/latest/#alternative-tokens
     @login_manager.user_loader
     def user_load(user_id):
         from moviedb.models.autenticacao import User

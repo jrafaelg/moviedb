@@ -1,6 +1,7 @@
-from flask import Blueprint, flash, redirect, request, url_for, render_template
+from flask import Blueprint, flash, redirect, request, url_for, render_template, current_app
 from flask_login import current_user, login_required, login_user, logout_user
 
+from infra.tokens import create_jwt_token
 from moviedb.forms.auth import RegistrationForm, LoginForm
 from moviedb import db
 from moviedb.models.autenticacao import User
@@ -24,8 +25,19 @@ def register():
         usuario.ativo = True
 
         db.session.add(usuario)
+        # Realiza o flush para garantir que o usuário tenha um ID gerado antes do commit.
+        db.session.flush()
+        # Atualiza o objeto usuário com os dados mais recentes do banco de dados.
+        db.session.refresh(usuario)
+        token = create_jwt_token(action='validate_email',
+                                 sub=usuario.email)
+        current_app.logger.debug(f"token de validação de email: {token}")
+        body = render_template('auth/email_confirmation.jinja2',
+                               nome=usuario.nome,
+                               url=url_for('auth.valida_email', token=token))
+        usuario.send_email(subject='Confirme seu email', body=body)
         db.session.commit()
-        flash("Registrado com sucesso!", category="success")
+        flash("Registrado com sucesso! Confira seu email antes de logar", category="success")
         return redirect(url_for('root.index'))
 
 
