@@ -1,9 +1,12 @@
 {
+  "SECRET_KEY": "UmaStringBemGrandeEAleatorio",
   "APP_BASE_URL": "http://127.0.0.1:5000",
   "APP_HOST": "0.0.0.0",
   "APP_PORT": 5000,
   "APP_NAME": "MyMovieDB",
   "TIMEZONE": "America/Sao_Paulo",
   "BOOTSTRAP_BOOTSWATCH_THEME": "Materia",
-  "SQLALCHEMY_DATABASE_URI": "sqlite:///mymovie.db"
+  "SQLALCHEMY_DATABASE_URI": "sqlite:///mymovie.db",
+  "EMAIL_SENDER": "rafael.goncalves1@aluno.ifsp.edu.br",
+  "SERVER_TOKEN": "8a52b789-492a-4cb4-9c55-b16b9e23271b"
 }
