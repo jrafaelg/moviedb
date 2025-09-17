@@ -9,8 +9,24 @@ from moviedb.models.mixins import BasicRepositoryMixin
 from moviedb import db
 
 def normalizar_email(email: str) -> str:
-    return email.lower()
+    """
+    Normaliza um endereço de e-mail utilizando a biblioteca email_validator.
 
+    Args:
+        email (str): Endereço de e-mail a ser normalizado.
+
+    Returns:
+        str: E-mail normalizado em letras minúsculas.
+
+    Raises:
+        EmailNotValidError: Se o e-mail fornecido não for válido.
+    """
+    from email_validator import validate_email
+    from email_validator.exceptions import EmailNotValidError
+    try:
+        return validate_email(email, check_deliverability=False).normalized.lower()
+    except EmailNotValidError:
+        raise
 
 class User(db.Model, BasicRepositoryMixin, UserMixin):
     __tablename__ = 'usuarios'
@@ -46,7 +62,10 @@ class User(db.Model, BasicRepositoryMixin, UserMixin):
 
     @classmethod
     def get_by_email(cls, email):
-        return db.session.execute(select(cls).where(cls.email_normalizado == normalizar_email(email))).scalar_one_or_none()
+        return db.session.execute(
+            select(cls).
+            where(cls.email_normalizado == normalizar_email(email))
+        ).scalar_one_or_none()
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -65,7 +84,7 @@ class User(db.Model, BasicRepositoryMixin, UserMixin):
             True se conseguir enviar o e-mail, False caso contrário.
         """
         from postmarker.core import PostmarkClient
-        postmark = PostmarkClient(server_token=current_app.config["SEVER_TOKEN"])
+        postmark = PostmarkClient(server_token=current_app.config["SERVER_TOKEN"])
         conteudo = postmark.emails.Email(
             From=current_app.config["EMAIL_SENDER"],
             To=self.email,

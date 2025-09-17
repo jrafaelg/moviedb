@@ -33,11 +33,12 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
+
         usuario = User()
         usuario.nome = form.nome.data
         usuario.email = form.email.data
         usuario.password = form.password.data
-        usuario.ativo = True
+        usuario.ativo = False
 
         db.session.add(usuario)
         # Realiza o flush para garantir que o usuário tenha um ID gerado antes do commit.
@@ -140,12 +141,15 @@ def valida_email(token):
         return redirect(request.referrer if request.referrer else url_for('root.index'))
 
     claims = verify_jwt_token(token)
+    current_app.logger.debug(f"claims: {claims}")
     if not(claims.get('valid', False) and {'sub', 'action'}.issubset(claims)):
         flash("Token incorreto", category="warning")
         return redirect(url_for('root.index'))
 
+    current_app.logger.debug(f"claims.get('sub'): {claims.get('sub')}")
     usuario = User.get_by_email(claims.get('sub'))
-    if (usuario is None and
+    current_app.logger.debug(f"usuario: {usuario}")
+    if (usuario is not None and
             not usuario.ativo and
             claims.get('action') == 'validate_email'):
         usuario.ativo = True

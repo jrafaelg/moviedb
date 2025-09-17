@@ -32,11 +32,42 @@
     </div>
 {% endif %}
 
-<main id="content" class="px-5">
+
+
+<main id="content" class="px-2">
     <div class="container-fluid">
-        {% block content %}{% endblock %}
+        {# bread_crumb() #}
+        <div class="row justify-content-center">
+            <div class="{%- block card_col -%}col-12{%- endblock -%}">
+                <div class="card shadow-lg my-5">
+                    <div class="card-header px-5 py-4">
+                        {%- block content_header -%}
+                            {% if title and not title_card %}
+                                <h2 class="fw-bold mb-4 card-title">{{ title }}</h2>
+                            {% else %}
+                                {% if title_card %}
+                                    <h2 class="mb-4 card-title">{{ title_card }}</h2>
+                                {% endif %}
+                                {% if subtitle_card %}
+                                    <p class="fst-italic card-subtitle text-body-secondary">{{ subtitle_card }}</p>
+                                {% endif %}
+                            {% endif %}
+                        {%- endblock -%}
+                    </div>
+                    <div class="card-body p-3">
+                        {% block content %}{% endblock %}
+                    </div>
+                    <div class="card-footer justify-content-center p-3 overflow-auto">
+                        {% block footer %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
+
+
+
 
 <footer class="mt-auto pt-5 mt-5 bg-body-tertiary text-body-secondary">
     <div class="container-fluid pb-4 px-5">
