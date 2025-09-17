@@ -67,5 +67,15 @@ class User(db.Model, BasicRepositoryMixin, UserMixin):
         from postmarker.core import PostmarkClient
         postmark = PostmarkClient(server_token=current_app.config["SEVER_TOKEN"])
         conteudo = postmark.emails.Email(
-            From=
+            From=current_app.config["EMAIL_SENDER"],
+            To=self.email,
+            Subject=subject,
+            TextBody=body
         )
+        response = conteudo.send()
+        current_app.logger.debug(f"E-mail enviado para {self.email}")
+        current_app.logger.debug(f"Resposta: {response}")
+        if response["ErrorCode"] != 0:
+            current_app.logger.error(f"Erro ao enviar e-mail enviado para {self.email}: {response['Message']}")
+            return False
+        return True
