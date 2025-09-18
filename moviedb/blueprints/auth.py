@@ -45,6 +45,7 @@ def register():
         db.session.flush()
         # Atualiza o objeto usuário com os dados mais recentes do banco de dados.
         db.session.refresh(usuario)
+
         token = create_jwt_token(action='validate_email',
                                  sub=usuario.email)
         current_app.logger.debug(f"token de validação de email: {token}")
@@ -52,6 +53,7 @@ def register():
                                nome=usuario.nome,
                                url=url_for('auth.valida_email', token=token))
         usuario.send_email(subject='Confirme seu email', body=body)
+
         db.session.commit()
         flash("Registrado com sucesso! Confira seu email antes de logar", category="success")
         return redirect(url_for('root.index'))

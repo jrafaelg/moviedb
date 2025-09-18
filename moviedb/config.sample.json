@@ -8,5 +8,12 @@
   "BOOTSTRAP_BOOTSWATCH_THEME": "Materia",
   "SQLALCHEMY_DATABASE_URI": "sqlite:///mymovie.db",
   "EMAIL_SENDER": "rafael.goncalves1@aluno.ifsp.edu.br",
-  "SERVER_TOKEN": "8a52b789-492a-4cb4-9c55-b16b9e23271b"
+  "SERVER_TOKEN": "8a52b789-492a-4cb4-9c55-b16b9e23271b",
+  "MINIFY": false,
+  "SEND_EMAIL": false,
+  "PASSWORD_MIN": 8,
+  "PASSWORD_MINUSCULA": false,
+  "PASSWORD_NUMERO": false,
+  "PASSWORD_SIMBOLO": false,
+  "PASSWORD_MAIUSCULA": false
 }

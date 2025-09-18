@@ -75,12 +75,15 @@ def verify_jwt_token(token: str) -> Dict[str, Any]:
     except jwt.ExpiredSignatureError as e:
         current_app.logger.error(f"JWT expired: {e}")
         claims.update({'reason': "expired"})
+
     except jwt.InvalidTokenError as e:
         current_app.logger.error(f"JWT invalid: {e}")
         claims.update({'reason': "invalid"})
+
     except jwt.InvalidSignatureError as e:
         current_app.logger.error(f"JWT invalid signature: {e}")
         claims.update({'reason': "bad_signature"})
+
     except ValueError as e:
         current_app.logger.error(f"ValueError: {e}")
         claims.update({'reason': "valueerror"})
