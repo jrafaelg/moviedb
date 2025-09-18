@@ -104,7 +104,7 @@ class RegistrationForm(FlaskForm):
         validators=[
             InputRequired(message='Senha requerido!'),
             Length(min=10, message="A senha deve ter 10 caracteres."),
-            SenhaComplexa(maiusculas=True, minusculas=True, simbolos=True)
+            SenhaComplexa()
         ]
     )
 
@@ -133,6 +133,32 @@ class LoginForm(FlaskForm):
         ])
 
     remember_me = BooleanField(label='lembrar')
-
     submit = SubmitField('Logar')
 
+class SetNewPasswordForm(FlaskForm):
+    password = PasswordField(
+        label='Nova Senha',
+        validators=[
+            InputRequired(message='Nova senha requerido!'),
+            SenhaComplexa()
+        ]
+    )
+    password2 = PasswordField(
+        label='Confirmar nova senha',
+        validators=[
+            InputRequired(message='Confirmação de senha requerido!'),
+            EqualTo(fieldname='password', message='Senhas precisam ser iguais.')
+        ]
+    )
+    submit = SubmitField('Confirmar')
+
+class AskToResetPasswordForm(FlaskForm):
+    email = StringField(
+        label='E-mail',
+        validators=[
+            InputRequired(message='E-mail requerido!'),
+            Email(message='Informe um E-mail válido!'),
+            Length(max=180, message='O email deve ter até 180 caracteres.')
+        ]
+    )
+    submit = SubmitField('Resetar Password')
